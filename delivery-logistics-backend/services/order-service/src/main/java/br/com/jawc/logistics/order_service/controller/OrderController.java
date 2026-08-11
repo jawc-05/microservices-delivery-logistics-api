@@ -31,7 +31,7 @@ public class OrderController {
     @Operation(summary = "Get all orders")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Returns the list of orders"),
-            @ApiResponse(responseCode = "400", description = "sintax error or bad request",
+            @ApiResponse(responseCode = "400", description = "syntax error or bad request",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "BAD_REQUEST"))),
             @ApiResponse(responseCode = "500", description = "An exception was made",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "INTERNAL_SERVER_ERROR"))),
@@ -43,7 +43,7 @@ public class OrderController {
     @PostMapping
     @Operation(summary = "Create a order")
     @ApiResponses(value={
-            @ApiResponse(responseCode = "200", description = "Create a order"),
+            @ApiResponse(responseCode = "201", description = "The order was created"),
             @ApiResponse(responseCode = "400", description = "Validation error or duplicate key")
     })
     public ResponseEntity<Order> createOrder(@RequestBody @Valid Order order){
