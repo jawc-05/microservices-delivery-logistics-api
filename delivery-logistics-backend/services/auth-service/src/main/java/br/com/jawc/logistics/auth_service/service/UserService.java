@@ -5,21 +5,20 @@ package br.com.jawc.logistics.auth_service.service;
 
 import br.com.jawc.logistics.auth_service.domain.User;
 import br.com.jawc.logistics.auth_service.repository.IUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
     private final IUserRepository userRepository;
-
-    @Autowired
-    public UserService(IUserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findBydEmail(email);
@@ -27,6 +26,7 @@ public class UserService {
     
     public User createUser(User user) {
         //TODO: Implementar BCryptPasswordEncoder do Spring Security antes de salvar
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
     
