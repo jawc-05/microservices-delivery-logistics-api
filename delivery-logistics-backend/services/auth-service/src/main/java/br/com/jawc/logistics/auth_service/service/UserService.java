@@ -21,7 +21,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public Optional<User> findByEmail(String email) {
-        return userRepository.findBydEmail(email);
+        return userRepository.findByEmail(email);
     }
     
     public User createUser(User user) {
