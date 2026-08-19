@@ -8,6 +8,7 @@ import br.com.jawc.logistics.auth_service.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +35,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
-
     @GetMapping(value = "/email/{email}")
     @Operation(summary = "Find the user with the email")
     @ApiResponses(value = {
@@ -45,6 +45,16 @@ public class UserController {
         return ResponseEntity.ok(userService.findByEmail(email));
     }
 
+
+    @PostMapping
+    @Operation(summary = "Create a user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Create the user"),
+            @ApiResponse(responseCode = "400", description = "Validation error or duplicate key"),
+    })
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user){
+        return ResponseEntity.ok(userService.createUser(user));
+    }
 
 
 
