@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,7 +45,7 @@ public class UserController {
     })
     public ResponseEntity<User> searchByEmail(@PathVariable(value = "email", required = true)String email){
         return ResponseEntity.ok(userService.findByEmail(email));
-    }
+    }    }
 
 
     @PostMapping
@@ -54,7 +55,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Validation error or duplicate key"),
     })
     public ResponseEntity<User> createUser(@Valid @RequestBody User user){
-        return ResponseEntity.ok(userService.createUser(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }
 
 

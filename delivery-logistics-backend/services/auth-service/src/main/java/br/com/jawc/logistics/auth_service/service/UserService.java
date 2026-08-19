@@ -20,8 +20,9 @@ public class UserService {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(()-> new RuntimeException("User not found"));
     }
     
     public User createUser(User user) {
