@@ -38,8 +38,9 @@ public class UserController {
     @GetMapping(value = "/email/{email}")
     @Operation(summary = "Find the user with the email")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Returns the user founded")
-            @ApiResponse(responseCode = "400", description = "Bad syntax or bad request"),
+            @ApiResponse(responseCode = "200", description = "Returns the user found"),
+            @ApiResponse(responseCode = "400", description = "Validation error or duplicate key"),
+            @ApiResponse(responseCode = "404", description = "USer not found"),
     })
     public ResponseEntity<User> searchByEmail(@PathVariable(value = "email", required = true)String email){
         return ResponseEntity.ok(userService.findByEmail(email));
@@ -49,7 +50,7 @@ public class UserController {
     @PostMapping
     @Operation(summary = "Create a user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Create the user"),
+            @ApiResponse(responseCode = "201", description = "Create the user"),
             @ApiResponse(responseCode = "400", description = "Validation error or duplicate key"),
     })
     public ResponseEntity<User> createUser(@Valid @RequestBody User user){
