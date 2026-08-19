@@ -6,19 +6,13 @@ package br.com.jawc.logistics.auth_service.controller;
 import br.com.jawc.logistics.auth_service.domain.User;
 import br.com.jawc.logistics.auth_service.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 
@@ -39,5 +33,19 @@ public class UserController {
     public ResponseEntity<Page<User>> searchUsers(Pageable pageable){
         return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
+
+
+    @GetMapping(value = "/email/{email}")
+    @Operation(summary = "Find the user with the email")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns the user founded")
+            @ApiResponse(responseCode = "400", description = "Bad syntax or bad request"),
+    })
+    public ResponseEntity<User> searchByEmail(@PathVariable(value = "email", required = true)String email){
+        return ResponseEntity.ok(userService.findByEmail(email));
+    }
+
+
+
 
 }
