@@ -45,7 +45,7 @@ public class UserController {
     })
     public ResponseEntity<User> searchByEmail(@PathVariable(value = "email", required = true)String email){
         return ResponseEntity.ok(userService.findByEmail(email));
-    }    }
+    }
 
 
     @PostMapping
@@ -54,10 +54,7 @@ public class UserController {
             @ApiResponse(responseCode = "201", description = "Create the user"),
             @ApiResponse(responseCode = "400", description = "Validation error or duplicate key"),
     })
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user){
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
     }
-
-
-
 }
