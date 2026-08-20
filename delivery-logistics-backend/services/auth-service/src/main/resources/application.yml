@@ -19,7 +19,7 @@ spring:
       hibernate:
         format_sql: true
 
-  api:
-    security:
-      token:
-        secret: ${JWT_SECRET:segredo-seguro-67}
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:segredo-seguro-67}
