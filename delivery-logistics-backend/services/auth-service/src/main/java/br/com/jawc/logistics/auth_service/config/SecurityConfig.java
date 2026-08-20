@@ -23,7 +23,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Desabilitado pois usaremos tokens stateless (JWT) futuramente
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll() // Liberando temporariamente todas as rotas da API para testes
+                        .requestMatchers("/api/**", "/error").permitAll() // Liberando temporariamente todas as rotas da API para testes
                         .anyRequest().authenticated()
                 );
 
