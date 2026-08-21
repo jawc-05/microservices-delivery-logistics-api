@@ -6,6 +6,7 @@ package br.com.jawc.logistics.auth_service.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,7 +33,13 @@ public class SecurityConfig {
                 .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/error").permitAll() // AGORA APENAS ESTÁ LIBERADO LOGIN E ERRORS
+                        //LIBERANDO A CRIAÇAO DE USUARIO(METODO POST)
+                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+
+                        //LIBERA LOGIN E ERROS
+                        .requestMatchers("/api/auth/**", "/error").permitAll()
+
+                        //BLOQUEIA O RESTO
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
