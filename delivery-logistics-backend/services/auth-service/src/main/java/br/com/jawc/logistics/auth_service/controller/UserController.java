@@ -4,6 +4,7 @@
 package br.com.jawc.logistics.auth_service.controller;
 
 import br.com.jawc.logistics.auth_service.domain.User;
+import br.com.jawc.logistics.auth_service.dto.UserResponseDTO;
 import br.com.jawc.logistics.auth_service.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -54,7 +55,9 @@ public class UserController {
             @ApiResponse(responseCode = "201", description = "Create the user"),
             @ApiResponse(responseCode = "400", description = "Validation error or duplicate key"),
     })
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody User user) {
+        User userSaved = userService.createUser(user);
+        var dto = new UserResponseDTO(userSaved.getId(), userSaved.getEmail(), userSaved.getRole(), userSaved.getCreatedAt());
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 }
