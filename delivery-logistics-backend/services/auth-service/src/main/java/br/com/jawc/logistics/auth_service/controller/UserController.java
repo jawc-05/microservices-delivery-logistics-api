@@ -1,0 +1,77 @@
+/**
+ * @author jawc
+ */
+package br.com.jawc.logistics.auth_service.controller;
+
+import br.com.jawc.logistics.auth_service.domain.User;
+import br.com.jawc.logistics.auth_service.dto.UserResponseDTO;
+import br.com.jawc.logistics.auth_service.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+
+@RestController
+@RequestMapping(value = "/api/users")
+@RequiredArgsConstructor
+@Tag(name = "User", description = "Endpoints for User management")
+public class UserController {
+
+    private final UserService userService;
+
+    @GetMapping
+    @Operation(summary = "Get all Users")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns the list of Users"),
+            @ApiResponse(responseCode = "400", description = "Bad syntax or bad request"),
+    })
+    public ResponseEntity<Page<UserResponseDTO>> searchUsers(Pageable pageable){
+        //Aqui eu ACHO todos os usuários
+        Page<User> usersPage = userService.getAllUsers(pageable);
+
+        //Aqui eu crio um dtoPage e passo, que a cada usuário dentro do usersPage eu crio um novo "user" usando o dto
+        Page<UserResponseDTO> dtoPage = usersPage.map(user -> new UserResponseDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getRole(),
+                user.getCreatedAt()
+        ));
+
+        //aqui só retorno
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
+    }
+
+    @GetMapping(value = "/email/{email}")
+    @Operation(summary = "Find the user with the email")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns the user found"),
+            @ApiResponse(responseCode = "400", description = "Validation error or duplicate key"),
+            @ApiResponse(responseCode = "404", description = "USer not found"),
+    })
+    public ResponseEntity<UserResponseDTO> searchByEmail(@PathVariable(value = "email", required = true)String email){
+        User userSearched = userService.findByEmail(email);
+        var dto = new UserResponseDTO(userSearched.getId(), userSearched.getEmail(), userSearched.getRole(), userSearched.getCreatedAt());
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
+
+
+    @PostMapping
+    @Operation(summary = "Create a user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Create the user"),
+            @ApiResponse(responseCode = "400", description = "Validation error or duplicate key"),
+    })
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody User user) {
+        User userSaved = userService.createUser(user);
+        var dto = new UserResponseDTO(userSaved.getId(), userSaved.getEmail(), userSaved.getRole(), userSaved.getCreatedAt());
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    }
+}
