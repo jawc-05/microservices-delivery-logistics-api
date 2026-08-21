@@ -44,8 +44,10 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Validation error or duplicate key"),
             @ApiResponse(responseCode = "404", description = "USer not found"),
     })
-    public ResponseEntity<User> searchByEmail(@PathVariable(value = "email", required = true)String email){
-        return ResponseEntity.ok(userService.findByEmail(email));
+    public ResponseEntity<UserResponseDTO> searchByEmail(@PathVariable(value = "email", required = true)String email){
+        User userSearched = userService.findByEmail(email);
+        var dto = new UserResponseDTO(userSearched.getId(), userSearched.getEmail(), userSearched.getRole(), userSearched.getCreatedAt());
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
 
