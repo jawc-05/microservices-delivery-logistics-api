@@ -33,8 +33,20 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Returns the list of Users"),
             @ApiResponse(responseCode = "400", description = "Bad syntax or bad request"),
     })
-    public ResponseEntity<Page<User>> searchUsers(Pageable pageable){
-        return ResponseEntity.ok(userService.getAllUsers(pageable));
+    public ResponseEntity<Page<UserResponseDTO>> searchUsers(Pageable pageable){
+        //Aqui eu ACHO todos os usuários
+        Page<User> usersPage = userService.getAllUsers(pageable);
+
+        //Aqui eu crio um dtoPage e passo, que a cada usuário dentro do usersPage eu crio um novo "user" usando o dto
+        Page<UserResponseDTO> dtoPage = usersPage.map(user -> new UserResponseDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getRole(),
+                user.getCreatedAt()
+        ));
+
+        //aqui só retorno
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
     }
 
     @GetMapping(value = "/email/{email}")
