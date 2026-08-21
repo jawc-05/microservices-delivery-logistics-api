@@ -3,6 +3,7 @@
  */
 package br.com.jawc.logistics.auth_service.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,20 +14,24 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final SecurityFilter securityFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Desabilitado pois usaremos tokens stateless (JWT) futuramente
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**", "/error").permitAll() // Liberando temporariamente todas as rotas da API para testes
+                        .requestMatchers("/api/auth/**", "/error").permitAll() // AGORA APENAS ESTÁ LIBERADO LOGIN E ERRORS
                         .anyRequest().authenticated()
-                );
-
+                )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
