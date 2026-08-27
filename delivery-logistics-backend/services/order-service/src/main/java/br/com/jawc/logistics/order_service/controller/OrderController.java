@@ -39,8 +39,22 @@ public class OrderController {
             @ApiResponse(responseCode = "500", description = "An exception was made",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "INTERNAL_SERVER_ERROR"))),
     })
-    public ResponseEntity<Page<Order>> searchOrders(Pageable pageable){
-        return ResponseEntity.ok(orderService.getAllOrders(pageable));
+    public ResponseEntity<Page<OrderResponseDTO>> searchOrders(Pageable pageable){
+        // Aqui acho as orders
+        Page<Order> ordersPage = orderService.getAllOrders(pageable);
+
+        //Aqui eu crio um dtoPage
+        Page<OrderResponseDTO> dtoPage = ordersPage.map(order -> new OrderResponseDTO(
+                order.getId(),
+                order.getCustomerEmail(),
+                order.getCustomerName(),
+                order.getTotalAmount(),
+                order.getStatus(),
+                order.getCreatedAt()
+        ));
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
     }
 
     @PostMapping
