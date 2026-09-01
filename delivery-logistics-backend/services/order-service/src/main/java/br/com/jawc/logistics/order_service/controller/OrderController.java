@@ -49,8 +49,8 @@ public class OrderController {
         //Aqui eu crio um dtoPage
         Page<OrderResponseDTO> dtoPage = ordersPage.map(order -> new OrderResponseDTO(
                 order.getId(),
-                order.getCustomerEmail(),
-                order.getCustomerName(),
+                order.getRecipientEmail(),
+                order.getRecipientName(),
                 order.getTotalAmount(),
                 order.getStatus(),
                 order.getCreatedAt()
@@ -70,8 +70,8 @@ public class OrderController {
 
         //Transformar o DTO de entrada na Entidade que vai pro banco
         Order newOrder = new Order();
-        newOrder.setCustomerName(request.customerName());
-        newOrder.setCustomerEmail(request.customerEmail());
+        newOrder.setRecipientName(request.recipientName());
+        newOrder.setRecipientEmail(request.recipientEmail());
         newOrder.setTotalAmount(request.totalAmount());
 
         //SALVA NO BANCO
@@ -80,8 +80,8 @@ public class OrderController {
        // Transformar a Entidade salva no DTO de saída (usando o orderCreated!)
         var dto = new OrderResponseDTO(
                 orderCreated.getId(),
-                orderCreated.getCustomerEmail(),
-                orderCreated.getCustomerName(),
+                orderCreated.getRecipientEmail(),
+                orderCreated.getRecipientName(),
                 orderCreated.getTotalAmount(),
                 orderCreated.getStatus(),
                 orderCreated.getCreatedAt()
