@@ -4,6 +4,8 @@
 package br.com.jawc.logistics.auth_service.controller;
 
 import br.com.jawc.logistics.auth_service.domain.User;
+import br.com.jawc.logistics.auth_service.dto.CreationUserDTO;
+import br.com.jawc.logistics.auth_service.dto.LoginRequestDTO;
 import br.com.jawc.logistics.auth_service.dto.UserResponseDTO;
 import br.com.jawc.logistics.auth_service.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,9 +71,24 @@ public class UserController {
             @ApiResponse(responseCode = "201", description = "Create the user"),
             @ApiResponse(responseCode = "400", description = "Validation error or duplicate key"),
     })
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody User user) {
-        User userSaved = userService.createUser(user);
-        var dto = new UserResponseDTO(userSaved.getId(), userSaved.getEmail(), userSaved.getRole(), userSaved.getCreatedAt());
-        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody CreationUserDTO request) {
+        //Transformando o DTO de entrada na entidade que vai ao banco
+        User newUser = new User();
+        newUser.setEmail(request.email());
+        newUser.setPassword(request.password());
+        newUser.setRole(request.role());
+
+        //SALVA NO BANCO
+        User userCreated = userService.createUser(newUser);
+
+        //Transforma a entity salva no DTO de saida
+        var dto = new UserResponseDTO(
+                userCreated.getId(),
+                userCreated.getEmail(),
+                userCreated.getRole(),
+                userCreated.getCreatedAt()
+        );
+
+        return ResponseEntity.status((HttpStatus.CREATED)).body(dto);
     }
 }

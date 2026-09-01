@@ -6,13 +6,11 @@ package br.com.jawc.logistics.auth_service.dto;
 import br.com.jawc.logistics.auth_service.domain.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
-
-public record UserResponseDTO(
-        Long id,
-        String email,
-        UserRole role,
-        LocalDateTime createdAt
+public record CreationUserDTO(
+        @Email @NotBlank String email,
+        @NotBlank String password,
+        @NotNull UserRole role
 ) {
 }
