@@ -3,6 +3,7 @@
  */
 package br.com.jawc.logistics.auth_service.dto;
 
+import br.com.jawc.logistics.auth_service.domain.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,6 @@ import jakarta.validation.constraints.NotNull;
 public record CreationUserDTO(
         @Email @NotBlank String email,
         @NotBlank String password,
-        @NotBlank @NotNull String role
+        @NotNull UserRole role
 ) {
 }
