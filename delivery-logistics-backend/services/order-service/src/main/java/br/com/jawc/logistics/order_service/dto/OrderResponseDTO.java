@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 
 public record OrderResponseDTO(
         Long id,
-        String customerEmail,
-        String customerName,
+        String recipientEmail,
+        String recipientName,
         BigDecimal totalAmount,
         OrderStatus status,
         LocalDateTime createdAt
