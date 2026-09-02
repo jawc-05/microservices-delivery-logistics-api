@@ -13,8 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_orders")
 @Getter
-@Setter
-@NoArgsConstructor
+@Setter @NoArgsConstructor
 @AllArgsConstructor
 public class Order {
 
