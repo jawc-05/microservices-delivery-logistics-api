@@ -23,10 +23,10 @@ public class Order {
     private Long id;
 
     @Column(nullable = false)
-    private String customerName;
+    private String recipientName;
 
     @Column(nullable = false)
-    private String customerEmail;
+    private String recipientEmail;
 
     @Column(nullable = false)
     private BigDecimal totalAmount;

@@ -6,6 +6,7 @@ package br.com.jawc.logistics.order_service.controller;
 import br.com.jawc.logistics.order_service.domain.Order;
 import br.com.jawc.logistics.order_service.dto.OrderRequestDTO;
 import br.com.jawc.logistics.order_service.dto.OrderResponseDTO;
+import br.com.jawc.logistics.order_service.dto.OrdersPerDayDTO;
 import br.com.jawc.logistics.order_service.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/orders")
@@ -46,8 +49,8 @@ public class OrderController {
         //Aqui eu crio um dtoPage
         Page<OrderResponseDTO> dtoPage = ordersPage.map(order -> new OrderResponseDTO(
                 order.getId(),
-                order.getCustomerEmail(),
-                order.getCustomerName(),
+                order.getRecipientEmail(),
+                order.getRecipientName(),
                 order.getTotalAmount(),
                 order.getStatus(),
                 order.getCreatedAt()
@@ -67,8 +70,8 @@ public class OrderController {
 
         //Transformar o DTO de entrada na Entidade que vai pro banco
         Order newOrder = new Order();
-        newOrder.setCustomerName(request.customerName());
-        newOrder.setCustomerEmail(request.customerEmail());
+        newOrder.setRecipientName(request.recipientName());
+        newOrder.setRecipientEmail(request.recipientEmail());
         newOrder.setTotalAmount(request.totalAmount());
 
         //SALVA NO BANCO
@@ -77,12 +80,25 @@ public class OrderController {
        // Transformar a Entidade salva no DTO de saída (usando o orderCreated!)
         var dto = new OrderResponseDTO(
                 orderCreated.getId(),
-                orderCreated.getCustomerEmail(),
-                orderCreated.getCustomerName(),
+                orderCreated.getRecipientEmail(),
+                orderCreated.getRecipientName(),
                 orderCreated.getTotalAmount(),
                 orderCreated.getStatus(),
                 orderCreated.getCreatedAt()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
+    }
+
+    @GetMapping("/reports/daily")
+    @Operation(summary = "Get the reports per day")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Return the list of orders per day"),
+            @ApiResponse(responseCode = "400", description = "syntax error or bad request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "BAD_REQUEST"))),
+            @ApiResponse(responseCode = "500", description = "An exception was made",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "INTERNAL_SERVER_ERROR")))
+    })
+    public ResponseEntity<List<OrdersPerDayDTO>> getOrdersPerDay(){
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrdersPerDayReport());
     }
 }
