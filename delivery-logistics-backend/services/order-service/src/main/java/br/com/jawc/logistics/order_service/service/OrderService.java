@@ -10,6 +10,7 @@ import br.com.jawc.logistics.order_service.dto.OrdersPerDayDTO;
 import br.com.jawc.logistics.order_service.feign.DeliveryClient;
 import br.com.jawc.logistics.order_service.repository.IOrderRepository;
 import br.com.jawc.logistics.order_service.repository.OrderReportRepository;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,11 +26,24 @@ public class OrderService {
     private final DeliveryClient deliveryClient;
 
     public Order createOrder(Order order) {
-        //A regra de negócio: Ligar para o delivery-service
-        CourierResponseDTO courier = deliveryClient.getAvailableCourier();
+        try {
+            //TENTA BUSCAR SE TEM UM ENTREGADOR DISPONIVEL NA HRA
+            CourierResponseDTO courier = deliveryClient.getAvailableCourier();
 
-        //COLOCANDO O ID ENCONTRADO NA NEW ORDER
-        order.setCourierId(courier.id());
+            //SE TIVER JA ADD
+            order.setCourierId(courier.id());
+            order.setStatus(OrderStatus.CONFIRMED);
+        } catch (FeignException.NotFound e){
+            // O Delivery Service respondeu 404 (Nenhum entregador disponível)
+            // Engolimos o erro para não perder a venda da transportadora!
+            order.setCourierId(null);
+            order.setStatus(OrderStatus.PENDING);
+        } catch (FeignException e){
+            // Se o Delivery Service estiver FORA DO AR (ex: 503, 500), cai aqui.
+            // Também salvamos o pedido para garantir o negócio!
+            order.setCourierId(null);
+            order.setStatus(OrderStatus.PENDING);
+        }
 
         return orderRepository.save(order);
     }
