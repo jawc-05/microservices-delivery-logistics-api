@@ -4,9 +4,11 @@
 package br.com.jawc.logistics.order_service.controller;
 
 import br.com.jawc.logistics.order_service.domain.Order;
+import br.com.jawc.logistics.order_service.dto.CourierResponseDTO;
 import br.com.jawc.logistics.order_service.dto.OrderRequestDTO;
 import br.com.jawc.logistics.order_service.dto.OrderResponseDTO;
 import br.com.jawc.logistics.order_service.dto.OrdersPerDayDTO;
+import br.com.jawc.logistics.order_service.feign.DeliveryClient;
 import br.com.jawc.logistics.order_service.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -32,6 +34,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final DeliveryClient deliveryClient;
 
     @GetMapping
     @Operation(summary = "Get all orders")
@@ -53,7 +56,8 @@ public class OrderController {
                 order.getRecipientName(),
                 order.getTotalAmount(),
                 order.getStatus(),
-                order.getCreatedAt()
+                order.getCreatedAt(),
+                order.getCourierId()
         ));
 
 
@@ -70,21 +74,23 @@ public class OrderController {
 
         //Transformar o DTO de entrada na Entidade que vai pro banco
         Order newOrder = new Order();
+        CourierResponseDTO courier = deliveryClient.getAvailableCourier();
+
         newOrder.setRecipientName(request.recipientName());
         newOrder.setRecipientEmail(request.recipientEmail());
         newOrder.setTotalAmount(request.totalAmount());
-
         //SALVA NO BANCO
         Order orderCreated = orderService.createOrder(newOrder);
 
-       // Transformar a Entidade salva no DTO de saída (usando o orderCreated!)
+        // Transformar a Entidade salva no DTO de saída (usando o orderCreated!)
         var dto = new OrderResponseDTO(
                 orderCreated.getId(),
                 orderCreated.getRecipientEmail(),
                 orderCreated.getRecipientName(),
                 orderCreated.getTotalAmount(),
                 orderCreated.getStatus(),
-                orderCreated.getCreatedAt()
+                orderCreated.getCreatedAt(),
+                orderCreated.getCourierId()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
