@@ -4,6 +4,7 @@
 package br.com.jawc.logistics.order_service.service;
 
 import br.com.jawc.logistics.order_service.domain.Order;
+import br.com.jawc.logistics.order_service.domain.OrderStatus;
 import br.com.jawc.logistics.order_service.dto.CourierResponseDTO;
 import br.com.jawc.logistics.order_service.dto.OrdersPerDayDTO;
 import br.com.jawc.logistics.order_service.feign.DeliveryClient;
@@ -24,9 +25,12 @@ public class OrderService {
     private final DeliveryClient deliveryClient;
 
     public Order createOrder(Order order) {
+        //A regra de negócio: Ligar para o delivery-service
         CourierResponseDTO courier = deliveryClient.getAvailableCourier();
 
+        //COLOCANDO O ID ENCONTRADO NA NEW ORDER
         order.setCourierId(courier.id());
+
         return orderRepository.save(order);
     }
 
