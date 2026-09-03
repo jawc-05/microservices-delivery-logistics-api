@@ -54,6 +54,29 @@ public class CourierController {
         return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
     }
 
+    @GetMapping("/available")
+    @Operation(summary = "Get an available courier")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns the available courier"),
+            @ApiResponse(responseCode = "404", description = "No courier available right now, come back later"),
+            @ApiResponse(responseCode = "400", description = "syntax error or bad request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "BAD_REQUEST"))),
+            @ApiResponse(responseCode = "500", description = "An exception was made",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "INTERNAL_SERVER_ERROR"))),
+    })
+    public ResponseEntity<CourierResponseDTO> searchAvailableCouriers(){
+        //ACHAMOS O ENTREGADOR DISPONIVEL
+        Courier courierFound = courierService.getAvailableCourier();
+
+        CourierResponseDTO courierResponseDTO = new CourierResponseDTO(
+                courierFound.getId(),
+                courierFound.getName(),
+                courierFound.getPhone(),
+                courierFound.getStatus()
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(courierResponseDTO);
+    }
+
     @PostMapping
     @Operation(summary = "Create a COurier")
     @ApiResponses(value = {
