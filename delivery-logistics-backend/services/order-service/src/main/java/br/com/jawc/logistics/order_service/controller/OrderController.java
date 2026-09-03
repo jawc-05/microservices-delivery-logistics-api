@@ -4,7 +4,6 @@
 package br.com.jawc.logistics.order_service.controller;
 
 import br.com.jawc.logistics.order_service.domain.Order;
-import br.com.jawc.logistics.order_service.dto.CourierResponseDTO;
 import br.com.jawc.logistics.order_service.dto.OrderRequestDTO;
 import br.com.jawc.logistics.order_service.dto.OrderResponseDTO;
 import br.com.jawc.logistics.order_service.dto.OrdersPerDayDTO;
@@ -74,7 +73,6 @@ public class OrderController {
 
         //Transformar o DTO de entrada na Entidade que vai pro banco
         Order newOrder = new Order();
-        CourierResponseDTO courier = deliveryClient.getAvailableCourier();
 
         newOrder.setRecipientName(request.recipientName());
         newOrder.setRecipientEmail(request.recipientEmail());
