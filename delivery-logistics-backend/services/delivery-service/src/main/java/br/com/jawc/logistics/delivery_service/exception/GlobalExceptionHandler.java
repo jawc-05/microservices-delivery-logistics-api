@@ -26,6 +26,6 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 }
