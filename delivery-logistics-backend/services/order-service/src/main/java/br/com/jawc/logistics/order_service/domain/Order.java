@@ -37,6 +37,9 @@ public class Order {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column
+    private Long courierId;
+
 
     @PrePersist
     protected void onCreate() {
