@@ -14,6 +14,7 @@ public record OrderResponseDTO(
         String recipientName,
         BigDecimal totalAmount,
         OrderStatus status,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Long courierId
 ) {
 }
