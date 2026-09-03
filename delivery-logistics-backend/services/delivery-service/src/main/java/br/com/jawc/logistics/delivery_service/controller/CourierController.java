@@ -6,20 +6,21 @@ package br.com.jawc.logistics.delivery_service.controller;
 import br.com.jawc.logistics.delivery_service.domain.Courier;
 import br.com.jawc.logistics.delivery_service.dto.CourierRequestDTO;
 import br.com.jawc.logistics.delivery_service.dto.CourierResponseDTO;
-import br.com.jawc.logistics.delivery_service.repository.ICourierRepository;
 import br.com.jawc.logistics.delivery_service.service.CourierService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/delivery")
@@ -29,6 +30,29 @@ public class CourierController {
 
     private final CourierService courierService;
 
+    @GetMapping
+    @Operation(summary = "Get all Couriers")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns the paginated list of couriers"),
+            @ApiResponse(responseCode = "400", description = "syntax error or bad request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "BAD_REQUEST"))),
+            @ApiResponse(responseCode = "500", description = "An exception was made",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "INTERNAL_SERVER_ERROR"))),
+    })
+    public ResponseEntity<Page<CourierResponseDTO>> searchCouriers(Pageable pageable) {
+        //ACHANDO OS COURIERS
+        Page<Courier> couriersPage = courierService.getAllCouriers(pageable);
+
+        //CRIANDO DTOPAGE
+        Page<CourierResponseDTO> dtoPage = couriersPage.map(courier -> new CourierResponseDTO(
+                courier.getId(),
+                courier.getName(),
+                courier.getPhone(),
+                courier.getStatus()
+        ));
+
+        return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
+    }
 
     @PostMapping
     @Operation(summary = "Create a COurier")
