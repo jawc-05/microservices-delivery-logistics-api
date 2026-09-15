@@ -5,4 +5,4 @@ spring:
   application:
     name: notification-service
   mongodb:
-    uri: mongodb://localhost:27017/notification_db
+    uri: mongodb://admin:adminpassword@localhost:27017/notification_db?authSource=admin
