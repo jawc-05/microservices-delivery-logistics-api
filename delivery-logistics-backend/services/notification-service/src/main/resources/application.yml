@@ -1,0 +1,11 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: notification-service
+  data:
+    mongodb:
+      # O MongoDB roda nativamente na porta 27017.
+      # O banco 'notification_db' será criado automaticamente na primeira inserção!
+      uri: mongodb://localhost:27017/notification_db
