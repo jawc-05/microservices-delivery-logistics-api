@@ -6,6 +6,8 @@ package br.com.jawc.logistics.notification_service.service;
 import br.com.jawc.logistics.notification_service.domain.Notification;
 import br.com.jawc.logistics.notification_service.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -23,7 +25,7 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
 
-    public List<Notification> getNotificationsByOrderId(Long orderId) {
-        return notificationRepository.findOrderById(orderId);
+    public Page<Notification> getNotificationsByOrderId(Long orderId, Pageable pageable) {
+        return notificationRepository.findByOrderId(orderId, pageable);
     }
 }
