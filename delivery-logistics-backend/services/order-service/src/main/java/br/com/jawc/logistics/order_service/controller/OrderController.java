@@ -4,10 +4,7 @@
 package br.com.jawc.logistics.order_service.controller;
 
 import br.com.jawc.logistics.order_service.domain.Order;
-import br.com.jawc.logistics.order_service.dto.OrderRequestDTO;
-import br.com.jawc.logistics.order_service.dto.OrderResponseDTO;
-import br.com.jawc.logistics.order_service.dto.OrderStatusRequestDTO;
-import br.com.jawc.logistics.order_service.dto.OrdersPerDayDTO;
+import br.com.jawc.logistics.order_service.dto.*;
 import br.com.jawc.logistics.order_service.feign.DeliveryClient;
 import br.com.jawc.logistics.order_service.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,6 +59,20 @@ public class OrderController {
 
 
         return ResponseEntity.status(HttpStatus.OK).body(dtoPage);
+    }
+
+    @GetMapping("/summary")
+    @Operation(summary = "Get the summary for a possible dashboard")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returns the summary of the orders"),
+            @ApiResponse(responseCode = "400", description = "syntax error or bad request",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "BAD_REQUEST"))),
+            @ApiResponse(responseCode = "500", description = "An exception was made",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, examples = @ExampleObject(value = "INTERNAL_SERVER_ERROR"))),
+    })
+    public ResponseEntity<SummaryDTO> getSummary(){
+        var dto = orderService.getOrderSummary();
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
     @PostMapping
