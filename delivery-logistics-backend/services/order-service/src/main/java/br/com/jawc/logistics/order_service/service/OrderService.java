@@ -77,8 +77,24 @@ public class OrderService {
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));
 
         order.setStatus(newStatus);
+        Order savedOrder = orderRepository.save(order);
 
-        return orderRepository.save(order);
+        try {
+            // 1. Instancia o DTO corretamente
+            var notificationRequest = new NotificationRequestDTO(
+                    savedOrder.getId(),
+                    "Pedido Atualizado com status: " + savedOrder.getStatus()
+            );
+            // 2. Envia para o MongoDB
+            notificationClient.sendNotification(notificationRequest);
+
+        } catch (Exception e) {
+            // 3. Se o notification-service estiver fora do ar, engolimos o erro!
+            // O pedido JÁ FOI SALVO no PostgreSQL na linha de cima. O negócio está garantido.
+            System.err.println("Aviso: Falha ao enviar log para o Notification Service. Motivo: " + e.getMessage());
+        }
+
+        return savedOrder;
     }
 
     public List<OrdersPerDayDTO> getOrdersPerDayReport() {
