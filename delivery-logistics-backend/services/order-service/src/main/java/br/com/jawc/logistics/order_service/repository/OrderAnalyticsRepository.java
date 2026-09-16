@@ -21,7 +21,7 @@ public class OrderAnalyticsRepository {
             COUNT(CASE WHEN status = 'SHIPPED' THEN 1 END) AS totalShipped,
             COUNT(CASE WHEN status = 'DELIVERED' THEN 1 END) AS totalDelivered,
             COUNT(CASE WHEN status = 'CANCELLED' THEN 1 END) AS totalCancelled
-        FROM orders
+        FROM tb_orders
     """;
 
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
