@@ -8,10 +8,12 @@ import br.com.jawc.logistics.order_service.domain.OrderStatus;
 import br.com.jawc.logistics.order_service.dto.CourierResponseDTO;
 import br.com.jawc.logistics.order_service.dto.NotificationRequestDTO;
 import br.com.jawc.logistics.order_service.dto.OrdersPerDayDTO;
+import br.com.jawc.logistics.order_service.dto.SummaryDTO;
 import br.com.jawc.logistics.order_service.exception.OrderNotFoundException;
 import br.com.jawc.logistics.order_service.feign.DeliveryClient;
 import br.com.jawc.logistics.order_service.feign.NotificationClient;
 import br.com.jawc.logistics.order_service.repository.IOrderRepository;
+import br.com.jawc.logistics.order_service.repository.OrderAnalyticsRepository;
 import br.com.jawc.logistics.order_service.repository.OrderReportRepository;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class OrderService {
     private final OrderReportRepository orderReportRepository;
     private final DeliveryClient deliveryClient;
     private final NotificationClient notificationClient;
+    private final OrderAnalyticsRepository analytics;
 
     public Order createOrder(Order order) {
         try {
@@ -51,16 +54,16 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         try {
-            // 1. Instancia o DTO corretamente
+            //Instancia o DTO corretamente
             var notificationRequest = new NotificationRequestDTO(
                     savedOrder.getId(),
                     "Pedido Criado com status: " + savedOrder.getStatus()
             );
-            // 2. Envia para o MongoDB
+            // Envia para o MongoDB
             notificationClient.sendNotification(notificationRequest);
 
         } catch (Exception e) {
-            // 3. Se o notification-service estiver fora do ar, engolimos o erro!
+            // Se o notification-service estiver fora do ar, AGUENTA o erro!
             // O pedido JÁ FOI SALVO no PostgreSQL na linha de cima. O negócio está garantido.
             System.err.println("Aviso: Falha ao enviar log para o Notification Service. Motivo: " + e.getMessage());
         }
@@ -99,5 +102,9 @@ public class OrderService {
 
     public List<OrdersPerDayDTO> getOrdersPerDayReport() {
         return orderReportRepository.getOrdersPerDayReport();
+    }
+
+    public SummaryDTO getOrderSummary() {
+        return analytics.getOrderSummary();
     }
 }
