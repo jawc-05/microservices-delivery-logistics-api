@@ -1,6 +1,9 @@
 version: '3.8'
 
 services:
+  # ==========================================
+  # BANCOS DE DADOS
+  # ==========================================
   postgres-db:
     image: postgres:15
     container_name: delivery_postgres
@@ -43,6 +46,69 @@ services:
     networks:
       - delivery-network
 
+  # ==========================================
+  # MICROSSERVIÇOS (SPRING BOOT)
+  # ==========================================
+  notification-service:
+    build: ./services/notification-service
+    container_name: delivery_notification
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://admin:adminpassword@mongodb:27017/admin
+    depends_on:
+      - mongodb
+    networks:
+      - delivery-network
+
+  delivery-service:
+    build: ./services/delivery-service
+    container_name: delivery_service_app
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/delivery_db?useSSL=false
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=adminpassword
+    depends_on:
+      - mysql-db
+    networks:
+      - delivery-network
+
+  auth-service:
+    build: ./services/auth-service
+    container_name: delivery_auth
+    ports:
+      - "8082:8082"
+    environment:
+      # O host muda de 'localhost' para 'postgres-db' (nome do container)
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/auth_db
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=adminpassword
+      # Variável para sobrescrever a secret do JWT, se necessário
+      - JWT_SECRET=segredo-seguro-67
+    depends_on:
+      - postgres-db
+    networks:
+      - delivery-network
+
+  order-service:
+    build: ./services/order-service
+    container_name: delivery_order
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=adminpassword
+    depends_on:
+      - postgres-db
+    networks:
+      - delivery-network
+
+# ==========================================
+# VOLUMES E REDES
+# ==========================================
 volumes:
   postgres_data:
   mysql_data:
