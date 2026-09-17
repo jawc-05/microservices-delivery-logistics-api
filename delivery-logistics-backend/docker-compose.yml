@@ -67,7 +67,7 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/delivery_db?useSSL=false
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/delivery_db?useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=adminpassword
     depends_on:
