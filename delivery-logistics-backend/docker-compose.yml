@@ -47,7 +47,7 @@ services:
       - delivery-network
 
   # ==========================================
-  # MICROSSERVIÇOS (SPRING BOOT)
+  # MICROSSERVIÇOS (SPRING BOOT)
   # ==========================================
   notification-service:
     build: ./services/notification-service
@@ -55,7 +55,7 @@ services:
     ports:
       - "8084:8084"
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://admin:adminpassword@mongodb:27017/admin
+      - SPRING_MONGODB_URI=mongodb://admin:adminpassword@mongodb:27017/notification_db?authSource=admin
     depends_on:
       - mongodb
     networks:
@@ -85,7 +85,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/auth_db
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=adminpassword
-      # Variável para sobrescrever a secret do JWT, se necessário
+      # Variável para sobrescrever a secret do JWT, se necessário
       - JWT_SECRET=segredo-seguro-67
     depends_on:
       - postgres-db
