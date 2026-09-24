@@ -249,4 +249,8 @@ As portas devem ser verificadas no arquivo `docker-compose.yml` ou nas configura
 
 Desenvolvido por **João Alfredo Williges Cunha**.
 
-Projeto voltado à demonstração de arquitetura de microsserviços, engenharia de software e desenvolvimento backend com Java.f
+Projeto voltado à demonstração de arquitetura de microsserviços, engenharia de software e desenvolvimento backend com Java.
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
