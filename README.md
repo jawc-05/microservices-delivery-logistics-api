@@ -250,3 +250,6 @@ Ports should be checked in the `docker-compose.yml` file or in the individual se
 Developed by **João Alfredo Williges Cunha**.
 
 Project aimed at demonstrating microservices architecture, software engineering, and backend development with Java.
+
+## 📝 License
+This project is licensed under the MIT License. See the LICENSE file for more details.
