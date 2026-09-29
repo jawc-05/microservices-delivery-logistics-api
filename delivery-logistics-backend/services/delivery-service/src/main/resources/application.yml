@@ -19,3 +19,8 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+
+springdoc:
+  packages-to-scan: br.com.jawc.logistics.delivery_service.controller
+  swagger-ui:
+    path: /swagger-ui.html
