@@ -3,7 +3,6 @@
  */
 package br.com.jawc.logistics.delivery_service.exception;
 
-import org.springframework.cloud.client.circuitbreaker.httpservice.HttpServiceFallback;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
